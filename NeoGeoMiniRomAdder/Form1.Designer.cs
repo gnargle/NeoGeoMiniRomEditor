@@ -40,6 +40,8 @@
             this.bNew = new System.Windows.Forms.Button();
             this.bSave = new System.Windows.Forms.Button();
             this.fileDialogImageLoad = new System.Windows.Forms.OpenFileDialog();
+            this.lEmus = new System.Windows.Forms.Label();
+            this.lRoms = new System.Windows.Forms.Label();
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgEmus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgRoms)).BeginInit();
@@ -56,7 +58,9 @@
             // 
             // flowLayoutPanel1
             // 
+            this.flowLayoutPanel1.Controls.Add(this.lEmus);
             this.flowLayoutPanel1.Controls.Add(this.dgEmus);
+            this.flowLayoutPanel1.Controls.Add(this.lRoms);
             this.flowLayoutPanel1.Controls.Add(this.dgRoms);
             this.flowLayoutPanel1.Controls.Add(this.flowLayoutPanel2);
             this.flowLayoutPanel1.Controls.Add(this.flDetails);
@@ -71,7 +75,7 @@
             // dgEmus
             // 
             this.dgEmus.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgEmus.Location = new System.Drawing.Point(3, 3);
+            this.dgEmus.Location = new System.Drawing.Point(3, 16);
             this.dgEmus.MultiSelect = false;
             this.dgEmus.Name = "dgEmus";
             this.dgEmus.ReadOnly = true;
@@ -82,11 +86,11 @@
             // dgRoms
             // 
             this.dgRoms.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgRoms.Location = new System.Drawing.Point(3, 164);
+            this.dgRoms.Location = new System.Drawing.Point(3, 190);
             this.dgRoms.MultiSelect = false;
             this.dgRoms.Name = "dgRoms";
             this.dgRoms.ReadOnly = true;
-            this.dgRoms.Size = new System.Drawing.Size(350, 398);
+            this.dgRoms.Size = new System.Drawing.Size(350, 380);
             this.dgRoms.TabIndex = 5;
             this.dgRoms.SelectionChanged += new System.EventHandler(this.dgRoms_SelectionChanged);
             // 
@@ -205,6 +209,24 @@
             this.fileDialogImageLoad.Filter = "Image files|*.jpg;*.png";
             this.fileDialogImageLoad.Title = "Select an Image...";
             // 
+            // lEmus
+            // 
+            this.lEmus.AutoSize = true;
+            this.lEmus.Location = new System.Drawing.Point(3, 0);
+            this.lEmus.Name = "lEmus";
+            this.lEmus.Size = new System.Drawing.Size(53, 13);
+            this.lEmus.TabIndex = 9;
+            this.lEmus.Text = "Emulators";
+            // 
+            // lRoms
+            // 
+            this.lRoms.AutoSize = true;
+            this.lRoms.Location = new System.Drawing.Point(3, 174);
+            this.lRoms.Name = "lRoms";
+            this.lRoms.Size = new System.Drawing.Size(34, 13);
+            this.lRoms.TabIndex = 10;
+            this.lRoms.Text = "Roms";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -214,6 +236,7 @@
             this.Name = "Form1";
             this.Text = "Form1";
             this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgEmus)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgRoms)).EndInit();
             this.flowLayoutPanel2.ResumeLayout(false);
@@ -245,6 +268,8 @@
         private System.Windows.Forms.Button bSave;
         private System.Windows.Forms.Button bLoadLCD;
         private System.Windows.Forms.OpenFileDialog fileDialogImageLoad;
+        private System.Windows.Forms.Label lEmus;
+        private System.Windows.Forms.Label lRoms;
     }
 }
 
