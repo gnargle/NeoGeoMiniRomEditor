@@ -25,7 +25,9 @@
         private void InitializeComponent() {
             this.ngmhFolderbrowserDlg = new System.Windows.Forms.FolderBrowserDialog();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.lEmus = new System.Windows.Forms.Label();
             this.dgEmus = new System.Windows.Forms.DataGridView();
+            this.lRoms = new System.Windows.Forms.Label();
             this.dgRoms = new System.Windows.Forms.DataGridView();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.pbLCD = new System.Windows.Forms.PictureBox();
@@ -40,8 +42,7 @@
             this.bNew = new System.Windows.Forms.Button();
             this.bSave = new System.Windows.Forms.Button();
             this.fileDialogImageLoad = new System.Windows.Forms.OpenFileDialog();
-            this.lEmus = new System.Windows.Forms.Label();
-            this.lRoms = new System.Windows.Forms.Label();
+            this.bFixRoms = new System.Windows.Forms.Button();
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgEmus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgRoms)).BeginInit();
@@ -72,6 +73,15 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(761, 574);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
+            // lEmus
+            // 
+            this.lEmus.AutoSize = true;
+            this.lEmus.Location = new System.Drawing.Point(3, 0);
+            this.lEmus.Name = "lEmus";
+            this.lEmus.Size = new System.Drawing.Size(53, 13);
+            this.lEmus.TabIndex = 9;
+            this.lEmus.Text = "Emulators";
+            // 
             // dgEmus
             // 
             this.dgEmus.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -82,6 +92,15 @@
             this.dgEmus.Size = new System.Drawing.Size(350, 155);
             this.dgEmus.TabIndex = 0;
             this.dgEmus.SelectionChanged += new System.EventHandler(this.dgEmus_SelectionChanged);
+            // 
+            // lRoms
+            // 
+            this.lRoms.AutoSize = true;
+            this.lRoms.Location = new System.Drawing.Point(3, 174);
+            this.lRoms.Name = "lRoms";
+            this.lRoms.Size = new System.Drawing.Size(34, 13);
+            this.lRoms.TabIndex = 10;
+            this.lRoms.Text = "Roms";
             // 
             // dgRoms
             // 
@@ -179,6 +198,7 @@
             // 
             this.flowLayoutPanel3.Controls.Add(this.bNew);
             this.flowLayoutPanel3.Controls.Add(this.bSave);
+            this.flowLayoutPanel3.Controls.Add(this.bFixRoms);
             this.flowLayoutPanel3.Location = new System.Drawing.Point(359, 357);
             this.flowLayoutPanel3.Name = "flowLayoutPanel3";
             this.flowLayoutPanel3.Size = new System.Drawing.Size(395, 100);
@@ -209,23 +229,15 @@
             this.fileDialogImageLoad.Filter = "Image files|*.jpg;*.png";
             this.fileDialogImageLoad.Title = "Select an Image...";
             // 
-            // lEmus
+            // bFixRoms
             // 
-            this.lEmus.AutoSize = true;
-            this.lEmus.Location = new System.Drawing.Point(3, 0);
-            this.lEmus.Name = "lEmus";
-            this.lEmus.Size = new System.Drawing.Size(53, 13);
-            this.lEmus.TabIndex = 9;
-            this.lEmus.Text = "Emulators";
-            // 
-            // lRoms
-            // 
-            this.lRoms.AutoSize = true;
-            this.lRoms.Location = new System.Drawing.Point(3, 174);
-            this.lRoms.Name = "lRoms";
-            this.lRoms.Size = new System.Drawing.Size(34, 13);
-            this.lRoms.TabIndex = 10;
-            this.lRoms.Text = "Roms";
+            this.bFixRoms.Location = new System.Drawing.Point(165, 3);
+            this.bFixRoms.Name = "bFixRoms";
+            this.bFixRoms.Size = new System.Drawing.Size(75, 23);
+            this.bFixRoms.TabIndex = 2;
+            this.bFixRoms.Text = "Fix ROMs";
+            this.bFixRoms.UseVisualStyleBackColor = true;
+            this.bFixRoms.Click += new System.EventHandler(this.bFixRoms_Click);
             // 
             // Form1
             // 
@@ -270,6 +282,7 @@
         private System.Windows.Forms.OpenFileDialog fileDialogImageLoad;
         private System.Windows.Forms.Label lEmus;
         private System.Windows.Forms.Label lRoms;
+        private System.Windows.Forms.Button bFixRoms;
     }
 }
 

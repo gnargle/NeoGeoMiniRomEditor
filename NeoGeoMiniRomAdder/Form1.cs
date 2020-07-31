@@ -7,7 +7,9 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -74,8 +76,7 @@ namespace NeoGeoMiniRomAdder {
             dgRoms.DataSource = currentList;
         }
 
-        private void dgRoms_SelectionChanged(object sender, EventArgs e) {
-            currentRom = (RomInfo)dgRoms.CurrentRow.DataBoundItem;
+        private ExtendedRomInfo GetExtendedRomInfo(RomInfo currentRom) {
             var local = Path.Combine(_ngmhFolder, "local");
             var gameFound = false;
             currentExtendedInfo = new ExtendedRomInfo();
@@ -105,11 +106,21 @@ namespace NeoGeoMiniRomAdder {
                 }
             }
             if (gameFound) {
+                currentExtendedInfo.LCDImage = Path.Combine(_ngmhFolder, "image\\games", currentExtendedInfo.Dir, "LCD.png");
+                currentExtendedInfo.TVImage = Path.Combine(_ngmhFolder, "image\\games", currentExtendedInfo.Dir, "TV.png");
+                return currentExtendedInfo;
+            } else return null;
+        }
+
+        private void dgRoms_SelectionChanged(object sender, EventArgs e) {
+            currentRom = (RomInfo)dgRoms.CurrentRow.DataBoundItem;
+            var local = Path.Combine(_ngmhFolder, "local");
+            currentExtendedInfo = GetExtendedRomInfo(currentRom);
+            if (currentExtendedInfo != null) {
                 //populate controls
                 tbName.Text = currentExtendedInfo.Name;
                 tbDir.Text = currentExtendedInfo.Dir;
-                currentExtendedInfo.LCDImage = Path.Combine(_ngmhFolder, "image\\games", currentExtendedInfo.Dir, "LCD.png");
-                currentExtendedInfo.TVImage = Path.Combine(_ngmhFolder, "image\\games", currentExtendedInfo.Dir, "TV.png");
+                
                 using (var bmpTemp = new Bitmap(currentExtendedInfo.LCDImage)) {
                     pbLCD.Image = new Bitmap(bmpTemp);
                 }
@@ -167,6 +178,79 @@ namespace NeoGeoMiniRomAdder {
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void bFixRoms_Click(object sender, EventArgs e) {
+            //despite the name, this still leaves roms in a non-launching state on most recent firmware.
+            var romInfoData = File.ReadAllLines(_romInfoPath);
+            foreach (var row in dgEmus.Rows) {
+                var dgvr = (DataGridViewRow)(row);
+                if (((Emu)(dgvr.DataBoundItem)).Type == EmulatorType.fba)
+                    continue; //skip fba, they're already working.
+                var list = EmuLists[((Emu)(dgvr.DataBoundItem)).Type];
+                foreach (var info in list) {
+                    var extInfo = GetExtendedRomInfo(info);
+                    if (extInfo != null) {
+                        var origID = info.ID;
+                        var origPath = info.PATH;
+                        var filename = Path.GetFileNameWithoutExtension(info.PATH);
+                        Regex rgx = new Regex("[^a-zA-Z0-9]");
+                        filename = rgx.Replace(filename, "") + Path.GetExtension(info.PATH);
+                        var newPath =info.PATH.Replace(Path.GetFileName(info.PATH), filename.ToLower());
+                        info.PATH = newPath;
+                        info.ID = info.ID.ToLower();
+                        extInfo.Dir = extInfo.Dir.ToLower();
+                        //so, first, the easy bit. Rename the image folder.
+                        var imgFolder = Path.GetDirectoryName(extInfo.LCDImage);
+                        var newImgFolder = imgFolder.Replace(origID, info.ID);
+                        if (imgFolder != newImgFolder && Directory.Exists(imgFolder)) {
+                            Directory.Move(imgFolder, newImgFolder + "_2");
+                            Directory.Move(newImgFolder+"_2", newImgFolder);
+                        }
+                        if (origPath != newPath && File.Exists(origPath.Replace("/vendor/res", _ngmhFolder)))
+                            File.Move(origPath.Replace("/vendor/res", _ngmhFolder), newPath.Replace("/vendor/res", _ngmhFolder));
+                        //ok, now change the rominfo.txt
+                        bool IDFound = false, PathFound = false;
+                        for (var i = 0; i <= romInfoData.Count() - 1; i++) {
+                            var line = romInfoData[i];
+                            if (line.StartsWith("ID") && line.Contains(origID)) {
+                                line = line.Replace(origID, info.ID);
+                                romInfoData[i] = line;
+                                IDFound = true;
+                            } else if (line.StartsWith("PATH") && line.Contains(origPath)) {
+                                line = line.Replace(origPath, newPath);
+                                romInfoData[i] = line;
+                                PathFound = true;
+                            }
+                            if (IDFound && PathFound) break;
+                        }
+                        //now, the games.ini.
+                        var gameFound = false;
+                        var local = Path.Combine(_ngmhFolder, "local");
+                        foreach (var dir in Directory.GetDirectories(local)) {
+                            if (dir.Contains(info.EmuString)) {
+                                var gameIni = File.ReadAllLines(Path.Combine(dir, "games.ini"));
+                                for (var i = 0; i <= gameIni.Count() - 1; i++) {
+                                    var line = gameIni[i];
+                                    if (line.StartsWith("[DIR]") && line.Contains(origID)) {
+                                        line = line.Replace(origID, info.ID);
+                                        gameIni[i] = line;
+                                        gameFound = true;
+                                        break;
+                                    } else {
+                                        if (gameFound) break;
+                                    }
+                                }
+                                if (gameFound) {
+                                    File.WriteAllLines(Path.Combine(dir, "games.ini"), gameIni);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            File.WriteAllLines(_romInfoPath, romInfoData);
         }
 
         private void LoadImage() {
