@@ -180,6 +180,15 @@ namespace NeoGeoMiniRomAdder {
             }
         }
 
+        public static void WriteAllLinesLinux(string path, IEnumerable<string> lines, string separator) {
+            using (var writer = new StreamWriter(path)) {
+                foreach (var line in lines) {
+                    writer.Write(line);
+                    writer.Write(separator);
+                }
+            }
+        }
+
         private void bFixRoms_Click(object sender, EventArgs e) {
             //despite the name, this still leaves roms in a non-launching state on most recent firmware.
             var romInfoData = File.ReadAllLines(_romInfoPath);
@@ -242,7 +251,8 @@ namespace NeoGeoMiniRomAdder {
                                     }
                                 }
                                 if (gameFound) {
-                                    File.WriteAllLines(Path.Combine(dir, "games.ini"), gameIni);
+                                    WriteAllLinesLinux(Path.Combine(dir, "games.ini"), gameIni, "\n");
+                                    //File.WriteAllLines(Path.Combine(dir, "games.ini"), gameIni);
                                     break;
                                 }
                             }
@@ -250,7 +260,8 @@ namespace NeoGeoMiniRomAdder {
                     }
                 }
             }
-            File.WriteAllLines(_romInfoPath, romInfoData);
+            WriteAllLinesLinux(_romInfoPath, romInfoData, "\n");
+            //File.WriteAllLines(_romInfoPath, romInfoData);
         }
 
         private void LoadImage() {
