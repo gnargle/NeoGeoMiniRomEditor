@@ -41,8 +41,8 @@
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
             this.bNew = new System.Windows.Forms.Button();
             this.bSave = new System.Windows.Forms.Button();
-            this.fileDialogImageLoad = new System.Windows.Forms.OpenFileDialog();
             this.bFixRoms = new System.Windows.Forms.Button();
+            this.fileDialogImageLoad = new System.Windows.Forms.OpenFileDialog();
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgEmus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgRoms)).BeginInit();
@@ -212,7 +212,7 @@
             this.bNew.TabIndex = 0;
             this.bNew.Text = "New ROM";
             this.bNew.UseVisualStyleBackColor = true;
-            this.bNew.Visible = false;
+            this.bNew.Click += new System.EventHandler(this.bNew_Click);
             // 
             // bSave
             // 
@@ -224,11 +224,6 @@
             this.bSave.UseVisualStyleBackColor = true;
             this.bSave.Click += new System.EventHandler(this.bSave_Click);
             // 
-            // fileDialogImageLoad
-            // 
-            this.fileDialogImageLoad.Filter = "Image files|*.jpg;*.png";
-            this.fileDialogImageLoad.Title = "Select an Image...";
-            // 
             // bFixRoms
             // 
             this.bFixRoms.Location = new System.Drawing.Point(165, 3);
@@ -238,6 +233,11 @@
             this.bFixRoms.Text = "Fix ROMs";
             this.bFixRoms.UseVisualStyleBackColor = true;
             this.bFixRoms.Click += new System.EventHandler(this.bFixRoms_Click);
+            // 
+            // fileDialogImageLoad
+            // 
+            this.fileDialogImageLoad.Filter = "Image files|*.jpg;*.png";
+            this.fileDialogImageLoad.Title = "Select an Image...";
             // 
             // Form1
             // 

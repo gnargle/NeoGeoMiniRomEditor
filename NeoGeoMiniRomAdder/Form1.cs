@@ -22,10 +22,10 @@ namespace NeoGeoMiniRomAdder {
         private Dictionary<EmulatorType, List<RomInfo>> EmuLists = new Dictionary<EmulatorType, List<RomInfo>>();
         private List<RomInfo> romInfos = new List<RomInfo>();
         private List<RomInfo> currentList;
+        private EmulatorType currentEmu;
         private RomInfo currentRom;
         private ExtendedRomInfo currentExtendedInfo;
         private Bitmap loadedbmp, lcdbmp, tvbmp;
-        Stream originalImageStream;
         public Form1() {
             InitializeComponent();
             try {
@@ -37,28 +37,7 @@ namespace NeoGeoMiniRomAdder {
                         _romInfoPath = Path.Combine(_ngmhFolder, "rominfo.txt");
                         if (!File.Exists(_romInfoPath))
                             throw new Exception("Could not find rominfo.txt!");
-                        var romInfoData = File.ReadAllLines(_romInfoPath);
-                        var currRom = new RomInfo();
-                        foreach (var dataLine in romInfoData) {
-                            //format (line by line) is ID, EMU, PATH, BLANK
-                            if (dataLine.StartsWith("ID")) {
-                                currRom = new RomInfo();
-                                currRom.ID = dataLine.Substring(3);
-                            } else if (dataLine.StartsWith("EMU")) {
-                                currRom.EMU = (EmulatorType) Enum.Parse(typeof(EmulatorType), dataLine.Substring(4));
-                                if (!FoundEmus.Contains(dataLine.Substring(4))) {
-                                    FoundEmus.Add(dataLine.Substring(4));
-                                    FoundEmusObj.Add(new Emu() { Type = currRom.EMU });
-                                    EmuLists.Add(currRom.EMU, new List<RomInfo>());
-                                }
-                            } else if (dataLine.StartsWith("PATH")) {
-                                currRom.PATH = dataLine.Substring(5);
-                            } else {
-                                romInfos.Add(currRom);
-                                EmuLists[currRom.EMU].Add(currRom);
-                            }
-                        }            
-                        dgEmus.DataSource = FoundEmusObj;
+                        LoadAll();
                 } finally {
                         Cursor.Current = Cursors.Default;
                     }
@@ -71,9 +50,64 @@ namespace NeoGeoMiniRomAdder {
             }
         }
 
+        private void LoadAll() {
+            var romInfoData = File.ReadAllLines(_romInfoPath);
+            var currRom = new RomInfo();
+            foreach (var dataLine in romInfoData) {
+                //format (line by line) is ID, EMU, PATH, BLANK
+                if (dataLine.StartsWith("ID")) {
+                    currRom = new RomInfo();
+                    currRom.ID = dataLine.Substring(3);
+                } else if (dataLine.StartsWith("EMU")) {
+                    currRom.EMU = (EmulatorType)Enum.Parse(typeof(EmulatorType), dataLine.Substring(4));
+                    if (!FoundEmus.Contains(dataLine.Substring(4))) {
+                        FoundEmus.Add(dataLine.Substring(4));
+                        FoundEmusObj.Add(new Emu() { Type = currRom.EMU });
+                        EmuLists.Add(currRom.EMU, new List<RomInfo>());
+                    }
+                } else if (dataLine.StartsWith("PATH")) {
+                    currRom.PATH = dataLine.Substring(5);
+                } else {
+                    if (currRom != null) {
+                        romInfos.Add(currRom);
+                        EmuLists[currRom.EMU].Add(currRom);
+                        currRom = null;
+                    }
+                }
+            }
+            if (currRom != null) {
+                romInfos.Add(currRom);
+                EmuLists[currRom.EMU].Add(currRom);
+                currRom = null;
+            } //clean up if we have one left.
+            dgEmus.DataSource = FoundEmusObj;
+        }
+
+        private void ReloadAll() {
+            dgRoms.SelectionChanged -= dgRoms_SelectionChanged;
+            dgEmus.SelectionChanged -= dgEmus_SelectionChanged;
+            dgRoms.ClearSelection();
+            dgRoms.DataSource = null;
+            dgEmus.ClearSelection();
+            dgEmus.DataSource = null;
+            dgRoms.SelectionChanged += dgRoms_SelectionChanged;
+            dgEmus.SelectionChanged += dgEmus_SelectionChanged;
+            FoundEmus.Clear();
+            FoundEmusObj.Clear();
+            EmuLists.Clear();
+            romInfos.Clear();
+            currentList.Clear();
+            currentRom = null;
+            currentExtendedInfo = null;
+            LoadAll();
+        }
+
         private void dgEmus_SelectionChanged(object sender, EventArgs e) {
-            currentList = EmuLists[((Emu)dgEmus.CurrentRow.DataBoundItem).Type];
-            dgRoms.DataSource = currentList;
+            if (dgEmus.CurrentRow != null) {
+                currentEmu = ((Emu)dgEmus.CurrentRow.DataBoundItem).Type;
+                currentList = EmuLists[currentEmu];
+                dgRoms.DataSource = currentList;
+            }
         }
 
         private ExtendedRomInfo GetExtendedRomInfo(RomInfo currentRom) {
@@ -113,21 +147,23 @@ namespace NeoGeoMiniRomAdder {
         }
 
         private void dgRoms_SelectionChanged(object sender, EventArgs e) {
-            currentRom = (RomInfo)dgRoms.CurrentRow.DataBoundItem;
-            var local = Path.Combine(_ngmhFolder, "local");
-            currentExtendedInfo = GetExtendedRomInfo(currentRom);
-            if (currentExtendedInfo != null) {
-                //populate controls
-                tbName.Text = currentExtendedInfo.Name;
-                tbDir.Text = currentExtendedInfo.Dir;
-                
-                using (var bmpTemp = new Bitmap(currentExtendedInfo.LCDImage)) {
-                    pbLCD.Image = new Bitmap(bmpTemp);
+            if (dgRoms.CurrentRow != null) {
+                currentRom = (RomInfo)dgRoms.CurrentRow.DataBoundItem;
+                var local = Path.Combine(_ngmhFolder, "local");
+                currentExtendedInfo = GetExtendedRomInfo(currentRom);
+                if (currentExtendedInfo != null) {
+                    //populate controls
+                    tbName.Text = currentExtendedInfo.Name;
+                    tbDir.Text = currentExtendedInfo.Dir;
+
+                    using (var bmpTemp = new Bitmap(currentExtendedInfo.LCDImage)) {
+                        pbLCD.Image = new Bitmap(bmpTemp);
+                    }
+                    using (var bmpTemp = new Bitmap(currentExtendedInfo.TVImage)) {
+                        pbTV.Image = new Bitmap(bmpTemp);
+                    }
                 }
-                using (var bmpTemp = new Bitmap(currentExtendedInfo.TVImage)) {
-                    pbTV.Image = new Bitmap(bmpTemp);
-                }
-            }            
+            }
         }
 
         private void bSave_Click(object sender, EventArgs e) {
@@ -189,8 +225,7 @@ namespace NeoGeoMiniRomAdder {
             }
         }
 
-        private void bFixRoms_Click(object sender, EventArgs e) {
-            //despite the name, this still leaves roms in a non-launching state on most recent firmware.
+        private void FixRoms() {
             var romInfoData = File.ReadAllLines(_romInfoPath);
             foreach (var row in dgEmus.Rows) {
                 var dgvr = (DataGridViewRow)(row);
@@ -205,16 +240,16 @@ namespace NeoGeoMiniRomAdder {
                         var filename = Path.GetFileNameWithoutExtension(info.PATH);
                         Regex rgx = new Regex("[^a-zA-Z0-9]");
                         filename = rgx.Replace(filename, "") + Path.GetExtension(info.PATH);
-                        var newPath =info.PATH.Replace(Path.GetFileName(info.PATH), filename.ToLower());
+                        var newPath = info.PATH.Replace(Path.GetFileName(info.PATH), filename.ToLower());
                         info.PATH = newPath;
-                        info.ID = info.ID.ToLower();
-                        extInfo.Dir = extInfo.Dir.ToLower();
+                        info.ID = rgx.Replace(info.ID, "").ToLower();
+                        extInfo.Dir = rgx.Replace(extInfo.Dir, "").ToLower();
                         //so, first, the easy bit. Rename the image folder.
                         var imgFolder = Path.GetDirectoryName(extInfo.LCDImage);
                         var newImgFolder = imgFolder.Replace(origID, info.ID);
                         if (imgFolder != newImgFolder && Directory.Exists(imgFolder)) {
                             Directory.Move(imgFolder, newImgFolder + "_2");
-                            Directory.Move(newImgFolder+"_2", newImgFolder);
+                            Directory.Move(newImgFolder + "_2", newImgFolder);
                         }
                         if (origPath != newPath && File.Exists(origPath.Replace("/vendor/res", _ngmhFolder)))
                             File.Move(origPath.Replace("/vendor/res", _ngmhFolder), newPath.Replace("/vendor/res", _ngmhFolder));
@@ -252,7 +287,7 @@ namespace NeoGeoMiniRomAdder {
                                 }
                                 if (gameFound) {
                                     WriteAllLinesLinux(Path.Combine(dir, "games.ini"), gameIni, "\n");
-                                    //File.WriteAllLines(Path.Combine(dir, "games.ini"), gameIni);
+                                    //NGM requires linux line-endings.
                                     break;
                                 }
                             }
@@ -261,7 +296,84 @@ namespace NeoGeoMiniRomAdder {
                 }
             }
             WriteAllLinesLinux(_romInfoPath, romInfoData, "\n");
-            //File.WriteAllLines(_romInfoPath, romInfoData);
+        }
+
+        private void bFixRoms_Click(object sender, EventArgs e) {
+            FixRoms();
+        }
+
+        private void bNew_Click(object sender, EventArgs e) {
+            var newRomDlg = new NewRomDlg();
+            if (newRomDlg.ShowDialog() == DialogResult.OK) {
+                Cursor.Current = Cursors.WaitCursor;
+                try {
+                    var newInfo = new RomInfo() {
+                        EMU = currentEmu,
+                        ID = Path.GetFileNameWithoutExtension(newRomDlg.RomPath)
+                    };
+                    newInfo.PATH = Path.Combine("/vendor/res/roms/", newInfo.EmuString, Path.GetFileName(newRomDlg.RomPath)).Replace("\\", "/");
+                    currentList.Add(newInfo);
+                    var newExt = new ExtendedRomInfo() {
+                        ID = -1, //we'll need to replace this when traversing the INI.
+                        Name = newRomDlg.RomName,
+                        Dir = newInfo.ID,
+                        IsNew = true,
+                        Type = 5,
+                        LCDImage = Path.Combine(_ngmhFolder, "image\\games", newInfo.ID, "LCD.png"),
+                        TVImage = Path.Combine(_ngmhFolder, "image\\games", newInfo.ID, "TV.png"),
+                    };
+                    //save images and move rom into place.
+                    Directory.CreateDirectory(Path.GetDirectoryName(newExt.LCDImage));
+                    Properties.Resources.LCD.Save(newExt.LCDImage);
+                    Properties.Resources.TV.Save(newExt.TVImage);
+                    Directory.CreateDirectory(Path.GetDirectoryName(newInfo.PATH.Replace("/vendor/res", _ngmhFolder)));
+                    File.Copy(newRomDlg.RomPath, newInfo.PATH.Replace("/vendor/res", _ngmhFolder), true);
+                    //add to RomInfo.txt
+                    var romInfoData = File.ReadAllLines(_romInfoPath).ToList();
+                    romInfoData.Add($"ID={newInfo.ID}");
+                    romInfoData.Add($"EMU={newInfo.EMU}");
+                    romInfoData.Add($"PATH={newInfo.PATH}");
+                    WriteAllLinesLinux(_romInfoPath, romInfoData, "\n");
+                    //finally add to games.Ini.
+                    var local = Path.Combine(_ngmhFolder, "local");
+                    currentExtendedInfo = new ExtendedRomInfo();
+                    List<string> gameIni = new List<string>();
+                    string lastDir = String.Empty;
+                    foreach (var dir in Directory.GetDirectories(local)) {
+                        lastDir = dir;
+                        if (dir.Contains(currentRom.EmuString)) {
+                            var latestID = 0;
+                            gameIni = File.ReadAllLines(Path.Combine(dir, "games.ini")).ToList();
+                            foreach (var line in gameIni) {
+                                if (line.StartsWith("[ID]")) {
+                                    latestID = int.Parse(line.Substring(5));
+                                }
+                            }
+                            if (latestID < 80) { //80 for NGM - ASP limit is 300 before things start getting funky.
+                                newExt.ID = latestID + 1;
+                                break;
+                            }
+                        }
+                    }
+                    if (newExt.ID == -1) {
+                        //need to create a new folder...
+                        //corss that bridge in a minute
+                    }
+                    if (gameIni.Any()) {
+                        gameIni.Add("[GAME]");
+                        gameIni.Add($"[ID]={newExt.ID}");
+                        gameIni.Add($"[TYPE]={newExt.Type}");
+                        gameIni.Add($"[NAME]={newExt.Name}");
+                        gameIni.Add($"[DIR]={newExt.Dir}");
+                        gameIni.Add("");
+                    }
+                    WriteAllLinesLinux(Path.Combine(lastDir, "games.ini"), gameIni, "\n");
+                    FixRoms();
+                    ReloadAll();
+                } finally {
+                    Cursor.Current = Cursors.Default;
+                }
+            }
         }
 
         private void LoadImage() {
