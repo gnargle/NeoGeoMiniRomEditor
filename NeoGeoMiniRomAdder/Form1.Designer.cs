@@ -69,47 +69,52 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(761, 574);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(888, 662);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // lEmus
             // 
             this.lEmus.AutoSize = true;
-            this.lEmus.Location = new System.Drawing.Point(3, 0);
+            this.lEmus.Location = new System.Drawing.Point(4, 0);
+            this.lEmus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lEmus.Name = "lEmus";
-            this.lEmus.Size = new System.Drawing.Size(53, 13);
+            this.lEmus.Size = new System.Drawing.Size(60, 15);
             this.lEmus.TabIndex = 9;
             this.lEmus.Text = "Emulators";
             // 
             // dgEmus
             // 
             this.dgEmus.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgEmus.Location = new System.Drawing.Point(3, 16);
+            this.dgEmus.Location = new System.Drawing.Point(4, 18);
+            this.dgEmus.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.dgEmus.MultiSelect = false;
             this.dgEmus.Name = "dgEmus";
             this.dgEmus.ReadOnly = true;
-            this.dgEmus.Size = new System.Drawing.Size(350, 155);
+            this.dgEmus.Size = new System.Drawing.Size(408, 179);
             this.dgEmus.TabIndex = 0;
             this.dgEmus.SelectionChanged += new System.EventHandler(this.dgEmus_SelectionChanged);
             // 
             // lRoms
             // 
             this.lRoms.AutoSize = true;
-            this.lRoms.Location = new System.Drawing.Point(3, 174);
+            this.lRoms.Location = new System.Drawing.Point(4, 200);
+            this.lRoms.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lRoms.Name = "lRoms";
-            this.lRoms.Size = new System.Drawing.Size(34, 13);
+            this.lRoms.Size = new System.Drawing.Size(37, 15);
             this.lRoms.TabIndex = 10;
             this.lRoms.Text = "Roms";
             // 
             // dgRoms
             // 
             this.dgRoms.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgRoms.Location = new System.Drawing.Point(3, 190);
+            this.dgRoms.Location = new System.Drawing.Point(4, 218);
+            this.dgRoms.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.dgRoms.MultiSelect = false;
             this.dgRoms.Name = "dgRoms";
             this.dgRoms.ReadOnly = true;
-            this.dgRoms.Size = new System.Drawing.Size(350, 380);
+            this.dgRoms.Size = new System.Drawing.Size(408, 438);
             this.dgRoms.TabIndex = 5;
             this.dgRoms.SelectionChanged += new System.EventHandler(this.dgRoms_SelectionChanged);
             // 
@@ -118,34 +123,38 @@
             this.flowLayoutPanel2.Controls.Add(this.pbLCD);
             this.flowLayoutPanel2.Controls.Add(this.pbTV);
             this.flowLayoutPanel2.Controls.Add(this.bLoadLCD);
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(359, 3);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(420, 3);
+            this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(395, 275);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(461, 317);
             this.flowLayoutPanel2.TabIndex = 7;
             // 
             // pbLCD
             // 
             this.pbLCD.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.pbLCD.Location = new System.Drawing.Point(3, 3);
+            this.pbLCD.Location = new System.Drawing.Point(4, 3);
+            this.pbLCD.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbLCD.Name = "pbLCD";
-            this.pbLCD.Size = new System.Drawing.Size(94, 78);
+            this.pbLCD.Size = new System.Drawing.Size(110, 90);
             this.pbLCD.TabIndex = 1;
             this.pbLCD.TabStop = false;
             // 
             // pbTV
             // 
             this.pbTV.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.pbTV.Location = new System.Drawing.Point(103, 3);
+            this.pbTV.Location = new System.Drawing.Point(122, 3);
+            this.pbTV.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbTV.Name = "pbTV";
-            this.pbTV.Size = new System.Drawing.Size(282, 242);
+            this.pbTV.Size = new System.Drawing.Size(329, 279);
             this.pbTV.TabIndex = 6;
             this.pbTV.TabStop = false;
             // 
             // bLoadLCD
             // 
-            this.bLoadLCD.Location = new System.Drawing.Point(3, 251);
+            this.bLoadLCD.Location = new System.Drawing.Point(4, 288);
+            this.bLoadLCD.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.bLoadLCD.Name = "bLoadLCD";
-            this.bLoadLCD.Size = new System.Drawing.Size(114, 23);
+            this.bLoadLCD.Size = new System.Drawing.Size(133, 27);
             this.bLoadLCD.TabIndex = 7;
             this.bLoadLCD.Text = "Load New Image";
             this.bLoadLCD.UseVisualStyleBackColor = true;
@@ -157,41 +166,46 @@
             this.flDetails.Controls.Add(this.tbName);
             this.flDetails.Controls.Add(this.lDir);
             this.flDetails.Controls.Add(this.tbDir);
-            this.flDetails.Location = new System.Drawing.Point(359, 284);
+            this.flDetails.Location = new System.Drawing.Point(420, 326);
+            this.flDetails.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.flDetails.Name = "flDetails";
-            this.flDetails.Size = new System.Drawing.Size(395, 67);
+            this.flDetails.Size = new System.Drawing.Size(461, 77);
             this.flDetails.TabIndex = 4;
             // 
             // lName
             // 
             this.lName.AutoSize = true;
-            this.lName.Location = new System.Drawing.Point(3, 0);
+            this.lName.Location = new System.Drawing.Point(4, 0);
+            this.lName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lName.Name = "lName";
-            this.lName.Size = new System.Drawing.Size(35, 13);
+            this.lName.Size = new System.Drawing.Size(39, 15);
             this.lName.TabIndex = 3;
             this.lName.Text = "Name";
             // 
             // tbName
             // 
-            this.tbName.Location = new System.Drawing.Point(44, 3);
+            this.tbName.Location = new System.Drawing.Point(51, 3);
+            this.tbName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(341, 20);
+            this.tbName.Size = new System.Drawing.Size(397, 23);
             this.tbName.TabIndex = 2;
             // 
             // lDir
             // 
             this.lDir.AutoSize = true;
-            this.lDir.Location = new System.Drawing.Point(3, 26);
+            this.lDir.Location = new System.Drawing.Point(4, 29);
+            this.lDir.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lDir.Name = "lDir";
-            this.lDir.Size = new System.Drawing.Size(114, 13);
+            this.lDir.Size = new System.Drawing.Size(129, 15);
             this.lDir.TabIndex = 5;
             this.lDir.Text = "Directory (Short Name)";
             // 
             // tbDir
             // 
-            this.tbDir.Location = new System.Drawing.Point(123, 29);
+            this.tbDir.Location = new System.Drawing.Point(141, 32);
+            this.tbDir.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbDir.Name = "tbDir";
-            this.tbDir.Size = new System.Drawing.Size(262, 20);
+            this.tbDir.Size = new System.Drawing.Size(305, 23);
             this.tbDir.TabIndex = 4;
             // 
             // flowLayoutPanel3
@@ -199,16 +213,18 @@
             this.flowLayoutPanel3.Controls.Add(this.bNew);
             this.flowLayoutPanel3.Controls.Add(this.bSave);
             this.flowLayoutPanel3.Controls.Add(this.bFixRoms);
-            this.flowLayoutPanel3.Location = new System.Drawing.Point(359, 357);
+            this.flowLayoutPanel3.Location = new System.Drawing.Point(420, 409);
+            this.flowLayoutPanel3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.flowLayoutPanel3.Name = "flowLayoutPanel3";
-            this.flowLayoutPanel3.Size = new System.Drawing.Size(395, 100);
+            this.flowLayoutPanel3.Size = new System.Drawing.Size(461, 115);
             this.flowLayoutPanel3.TabIndex = 8;
             // 
             // bNew
             // 
-            this.bNew.Location = new System.Drawing.Point(3, 3);
+            this.bNew.Location = new System.Drawing.Point(4, 3);
+            this.bNew.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.bNew.Name = "bNew";
-            this.bNew.Size = new System.Drawing.Size(75, 23);
+            this.bNew.Size = new System.Drawing.Size(88, 27);
             this.bNew.TabIndex = 0;
             this.bNew.Text = "New ROM";
             this.bNew.UseVisualStyleBackColor = true;
@@ -216,9 +232,10 @@
             // 
             // bSave
             // 
-            this.bSave.Location = new System.Drawing.Point(84, 3);
+            this.bSave.Location = new System.Drawing.Point(100, 3);
+            this.bSave.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.bSave.Name = "bSave";
-            this.bSave.Size = new System.Drawing.Size(75, 23);
+            this.bSave.Size = new System.Drawing.Size(88, 27);
             this.bSave.TabIndex = 1;
             this.bSave.Text = "Save ROM";
             this.bSave.UseVisualStyleBackColor = true;
@@ -226,9 +243,10 @@
             // 
             // bFixRoms
             // 
-            this.bFixRoms.Location = new System.Drawing.Point(165, 3);
+            this.bFixRoms.Location = new System.Drawing.Point(196, 3);
+            this.bFixRoms.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.bFixRoms.Name = "bFixRoms";
-            this.bFixRoms.Size = new System.Drawing.Size(75, 23);
+            this.bFixRoms.Size = new System.Drawing.Size(88, 27);
             this.bFixRoms.TabIndex = 2;
             this.bFixRoms.Text = "Fix ROMs";
             this.bFixRoms.UseVisualStyleBackColor = true;
@@ -241,10 +259,11 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(761, 574);
+            this.ClientSize = new System.Drawing.Size(888, 662);
             this.Controls.Add(this.flowLayoutPanel1);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "NeoGeoMini Rom Tool";
