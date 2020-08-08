@@ -1,9 +1,9 @@
-********************************************\n
-*	         NEO-GEO-MINI ROM TOOL	         *\n
-*	        by your friend, Athene		       *\n
-********************************************
+# ********************************************
+# *	         NEO-GEO-MINI ROM TOOL	         *
+# *	        by your friend, Athene		       *
+# ********************************************
 
-#BEFORE YOU START:
+# BEFORE YOU START:
 
 I am not responsible for any damage to your device. This tool is provided as-is - it may have additional work in future but this is not guaranteed.
 
@@ -13,7 +13,7 @@ This was designed around and tested with the Don Annis NGMH pack, no guarantees 
 
 The maximum number of permitted roms in a folder by this tool is 80. If all your folders for a single emulator have 80 or more roms in them, a new folder will not be created - this should be done manually and added to the lang array ini file yourself.
 
-#HOW TO:
+# HOW TO:
 
 1. load the exe. You'll be presented with a folder select dialog.
 2. Pick your NGMH/ASP folder. I only own an NGMH but in theory ASP should work just fine the same way.
