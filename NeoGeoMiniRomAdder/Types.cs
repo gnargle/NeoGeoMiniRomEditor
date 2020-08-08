@@ -27,7 +27,6 @@ namespace NeoGeoMiniRomAdder {
         public string Dir { get; set; }
         public string LCDImage { get; set; }
         public bool NewImage { get; set; }
-        public string NewImageFile { get; set; }
         public string TVImage { get; set; }
         public string GameINI { get; set; }
         public bool IsNew { get; set; } = false;

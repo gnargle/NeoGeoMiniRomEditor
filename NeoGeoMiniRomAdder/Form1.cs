@@ -357,10 +357,10 @@ namespace NeoGeoMiniRomAdder {
                             }
                         }
                     }
-                    if (newExt.ID == -1) {
+                    /* if (newExt.ID == -1) {
                         //need to create a new folder...
                         //corss that bridge in a minute
-                    }
+                    }*/
                     if (gameIni.Any()) {
                         gameIni.Add("[GAME]");
                         gameIni.Add($"[ID]={newExt.ID}");
@@ -380,12 +380,10 @@ namespace NeoGeoMiniRomAdder {
 
         private void LoadImage() {
             if (fileDialogImageLoad.ShowDialog() == DialogResult.OK) {
-                File.Copy(fileDialogImageLoad.FileName, fileDialogImageLoad.FileName + "_1", true);
                 byte[] data = File.ReadAllBytes(fileDialogImageLoad.FileName);
                 Stream originalImageStream = new MemoryStream(data);
                 loadedbmp = new Bitmap(originalImageStream);
                 currentExtendedInfo.NewImage = true;
-                currentExtendedInfo.NewImageFile = fileDialogImageLoad.FileName + "_1";
                 lcdbmp = new Bitmap(loadedbmp, new Size(pbLCD.Width, pbLCD.Height));
                 pbLCD.Image.Dispose();
                 pbLCD.ImageLocation = String.Empty;
