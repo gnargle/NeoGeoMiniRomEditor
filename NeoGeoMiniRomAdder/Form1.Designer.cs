@@ -56,6 +56,7 @@
             // ngmhFolderbrowserDlg
             // 
             this.ngmhFolderbrowserDlg.Description = "Locate your NGMH folder";
+            this.ngmhFolderbrowserDlg.UseDescriptionForTitle = true;
             // 
             // flowLayoutPanel1
             // 
@@ -71,7 +72,7 @@
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(888, 662);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(886, 662);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // lEmus
@@ -135,23 +136,23 @@
             this.pbLCD.Location = new System.Drawing.Point(4, 3);
             this.pbLCD.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbLCD.Name = "pbLCD";
-            this.pbLCD.Size = new System.Drawing.Size(110, 90);
+            this.pbLCD.Size = new System.Drawing.Size(94, 78);
             this.pbLCD.TabIndex = 1;
             this.pbLCD.TabStop = false;
             // 
             // pbTV
             // 
             this.pbTV.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.pbTV.Location = new System.Drawing.Point(122, 3);
+            this.pbTV.Location = new System.Drawing.Point(106, 3);
             this.pbTV.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbTV.Name = "pbTV";
-            this.pbTV.Size = new System.Drawing.Size(329, 279);
+            this.pbTV.Size = new System.Drawing.Size(282, 242);
             this.pbTV.TabIndex = 6;
             this.pbTV.TabStop = false;
             // 
             // bLoadLCD
             // 
-            this.bLoadLCD.Location = new System.Drawing.Point(4, 288);
+            this.bLoadLCD.Location = new System.Drawing.Point(4, 251);
             this.bLoadLCD.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.bLoadLCD.Name = "bLoadLCD";
             this.bLoadLCD.Size = new System.Drawing.Size(133, 27);
@@ -261,7 +262,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(888, 662);
+            this.ClientSize = new System.Drawing.Size(886, 662);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "Form1";
