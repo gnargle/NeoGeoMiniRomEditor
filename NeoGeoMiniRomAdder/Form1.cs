@@ -60,9 +60,10 @@ namespace NeoGeoMiniRomAdder {
                     currRom.ID = dataLine.Substring(3);
                 } else if (dataLine.StartsWith("EMU")) {
                     currRom.EMU = (EmulatorType)Enum.Parse(typeof(EmulatorType), dataLine.Substring(4));
-                    if (!FoundEmus.Contains(dataLine.Substring(4))) {
+                    if (!FoundEmus.Contains(dataLine.Substring(4))) {                        
                         FoundEmus.Add(dataLine.Substring(4));
-                        FoundEmusObj.Add(new Emu() { Type = currRom.EMU });
+                        if (currRom.EMU != EmulatorType.fba) //don't add fba to the grid list since adding/editing roms for that is unsupported.
+                            FoundEmusObj.Add(new Emu() { Type = currRom.EMU });
                         EmuLists.Add(currRom.EMU, new List<RomInfo>());
                     }
                 } else if (dataLine.StartsWith("PATH")) {
@@ -79,7 +80,7 @@ namespace NeoGeoMiniRomAdder {
                 romInfos.Add(currRom);
                 EmuLists[currRom.EMU].Add(currRom);
                 currRom = null;
-            } //clean up if we have one left.
+            } //clean up if we have one left e.g. if there isn't a new line at the end of the file
             dgEmus.DataSource = FoundEmusObj;
         }
 
@@ -304,6 +305,7 @@ namespace NeoGeoMiniRomAdder {
 
         private void bNew_Click(object sender, EventArgs e) {
             var newRomDlg = new NewRomDlg();
+            newRomDlg.Text = $"Adding new ROM for {currentEmu} system";
             if (newRomDlg.ShowDialog() == DialogResult.OK) {
                 Cursor.Current = Cursors.WaitCursor;
                 try {

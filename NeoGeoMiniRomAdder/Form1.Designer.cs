@@ -246,7 +246,8 @@
             this.ClientSize = new System.Drawing.Size(761, 574);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "NeoGeoMini Rom Tool";
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgEmus)).EndInit();
