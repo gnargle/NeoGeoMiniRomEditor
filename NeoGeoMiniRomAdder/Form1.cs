@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace NeoGeoMiniRomAdder {
-    public partial class Form1 : Form {
+    public partial class Form1 : System.Windows.Forms.Form {
         private string _ngmhFolder = String.Empty;
         private string _romInfoPath = String.Empty;
         private List<String> FoundEmus = new List<String>();
