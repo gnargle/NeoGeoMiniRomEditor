@@ -16,7 +16,7 @@ The maximum number of permitted roms in a folder by this tool is 80. If all your
 # HOW TO:
 
 1. load the exe. You'll be presented with a folder select dialog.
-2. Pick your NGMH/ASP folder. I only own an NGMH but in theory ASP should work just fine the same way.
+2. Pick your NGMH/ASP folder. I only own an NGMH but in theory ASP should work just fine the same way. EDIT: Currently ASP WILL NOT WORK. I am working on changes to rectify this, but as I do not own an ASP myself I will not be able to verify the end product.
 3. The main window will load - it may load minimised for some reason. 
 4. On the left of the window are two grids - the upper grid is the list of emulators set up on your device. The lower grid is the list of roms for the selected emulator.
 5. Selecting a rom in the lower grid will present you with the ROM data on the right of the window. The images, display name and directory/romid can be modified.
