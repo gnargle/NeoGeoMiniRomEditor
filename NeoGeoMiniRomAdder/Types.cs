@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NeoGeoMiniRomAdder {
-    public enum EmulatorType { fba, fc, sfc, md, gbc, gba};
+    public enum EmulatorType { fba, fc, sfc, md, gbc, gba, ng, ra, pce};//wtf is ra? it's only used for mvc2...
     public class RomInfo {
         public string ID { get; set; }
         public EmulatorType EMU { get; set; }
@@ -15,6 +15,13 @@ namespace NeoGeoMiniRomAdder {
                     case EmulatorType.sfc: return "snes";
                     case EmulatorType.md: return "genesis";
                     case EmulatorType.gbc: return "gb"; //contains gb and gbc.
+                    default: return EMU.ToString();
+                }
+            } }
+        public string ASPString { get {
+                switch (EMU) {
+                    case EmulatorType.sfc: return "SNES";
+                    case EmulatorType.md: return "SEGA";
                     default: return EMU.ToString();
                 }
             } }
@@ -28,6 +35,8 @@ namespace NeoGeoMiniRomAdder {
         public string LCDImage { get; set; }
         public bool NewImage { get; set; }
         public string TVImage { get; set; }
+        public string CoverImage { get; set; }
+        public string FlyerImage { get; set; }
         public string GameINI { get; set; }
         public bool IsNew { get; set; } = false;
     }

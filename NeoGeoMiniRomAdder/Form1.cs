@@ -7,6 +7,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -26,28 +27,39 @@ namespace NeoGeoMiniRomAdder {
         private RomInfo currentRom;
         private ExtendedRomInfo currentExtendedInfo;
         private Bitmap loadedbmp, lcdbmp, tvbmp;
+        private bool _ASPMode = false;
         public Form1() {
-            InitializeComponent();
-            try {
-                if (ngmhFolderbrowserDlg.ShowDialog() == DialogResult.OK) {
-                    //init 
-                    Cursor.Current = Cursors.WaitCursor;
-                    try {
-                        _ngmhFolder = ngmhFolderbrowserDlg.SelectedPath;
+            InitializeComponent();            
+        }
+
+        private void Form1_Shown(object sender, EventArgs e) {
+            //try {
+            if (ngmhFolderbrowserDlg.ShowDialog() == DialogResult.OK) {
+                //init 
+                Cursor.Current = Cursors.WaitCursor;
+                try {
+                    _ngmhFolder = ngmhFolderbrowserDlg.SelectedPath;
+                    if (_ngmhFolder.Contains("ASPh"))
+                        _ASPMode = true;
+                    if (_ASPMode) 
+                        _romInfoPath = Path.Combine(_ngmhFolder, "hack", "rominfo.txt");                        
+                     else 
                         _romInfoPath = Path.Combine(_ngmhFolder, "rominfo.txt");
-                        if (!File.Exists(_romInfoPath))
-                            throw new Exception("Could not find rominfo.txt!");
-                        LoadAll();
+                    pASPImage.Visible = _ASPMode;
+                    flpNGMImage.Visible = !_ASPMode;
+                    if (!File.Exists(_romInfoPath))
+                        throw new Exception("Could not find rominfo.txt!");
+                    LoadAll();
                 } finally {
-                        Cursor.Current = Cursors.Default;
-                    }
-                } else {
-                    throw new Exception("You must select a pre-existing NGMH folder!");                    
+                    Cursor.Current = Cursors.Default;
                 }
-            } catch (Exception e) {
-                MessageBox.Show(e.Message);
-                Close();
+            } else {
+                throw new Exception("You must select a pre-existing NGMH folder!");
             }
+            // } catch (Exception ex) {
+            //     MessageBox.Show(ex.Message);
+            //     Close();
+            // }
         }
 
         private void LoadAll() {
@@ -56,6 +68,11 @@ namespace NeoGeoMiniRomAdder {
             foreach (var dataLine in romInfoData) {
                 //format (line by line) is ID, EMU, PATH, BLANK
                 if (dataLine.StartsWith("ID")) {
+                    if (currRom != null && !String.IsNullOrWhiteSpace(currRom.ID)) {
+                        romInfos.Add(currRom);
+                        EmuLists[currRom.EMU].Add(currRom);
+                        currRom = null;
+                    }
                     currRom = new RomInfo();
                     currRom.ID = dataLine.Substring(3);
                 } else if (dataLine.StartsWith("EMU")) {
@@ -69,7 +86,7 @@ namespace NeoGeoMiniRomAdder {
                 } else if (dataLine.StartsWith("PATH")) {
                     currRom.PATH = dataLine.Substring(5);
                 } else {
-                    if (currRom != null) {
+                    if (currRom != null && !String.IsNullOrWhiteSpace(currRom.ID)) {
                         romInfos.Add(currRom);
                         EmuLists[currRom.EMU].Add(currRom);
                         currRom = null;
@@ -115,34 +132,79 @@ namespace NeoGeoMiniRomAdder {
             var local = Path.Combine(_ngmhFolder, "local");
             var gameFound = false;
             currentExtendedInfo = new ExtendedRomInfo();
-            foreach (var dir in Directory.GetDirectories(local)) {
-                if (dir.Contains(currentRom.EmuString)) {
-                    var gameIni = File.ReadAllLines(Path.Combine(dir, "games.ini"));
+            if (_ASPMode) {
+                //need to read langarray as currently the langs can't be custom defined...
+                var langArray = File.ReadAllLines(Path.Combine(local, "lang_array.ini"));
+                var fold = String.Empty;
+                foreach (var langLine in langArray) {
+                    if (langLine.StartsWith("[")) {
+                        var lineSplit = langLine.Split('=');
+                        var emu = lineSplit[1].Substring(1, lineSplit[1].Length - 2);
+                        if (emu.Equals(currentRom.ASPString, StringComparison.InvariantCultureIgnoreCase)) {
+                            fold = Path.Combine(local, lineSplit[0].Substring(1, lineSplit[0].Length - 2));
+                            break;
+                        }                        
+                    }
+                }
+                if (fold != String.Empty) {
+                    var gameIni = File.ReadAllLines(Path.Combine(fold, "games.ini"));
                     foreach (var line in gameIni) {
                         if (line.StartsWith("[GAME]")) {
 
                         } else if (line.StartsWith("[ID]")) {
-                            currentExtendedInfo.ID = int.Parse(line.Substring(5));
+                            var a = line.Substring(5);
+                            currentExtendedInfo.ID = int.Parse(a.Substring(1, a.Length - 2));
                         } else if (line.StartsWith("[TYPE]")) {
                             //always 5 for non fba
                         } else if (line.StartsWith("[NAME]")) {
-                            currentExtendedInfo.Name = line.Substring(7);
+                            //currentExtendedInfo.Name = line.Substring(7);
                         } else if (line.StartsWith("[DIR]")) {
-                            currentExtendedInfo.Dir = line.Substring(6);
+                            var a = line.Substring(6);
+                            currentExtendedInfo.Dir = a.Substring(1, a.Length-2);
                             if (currentExtendedInfo.Dir.Equals(currentRom.ID)) {
                                 gameFound = true;
-                                currentExtendedInfo.GameINI = Path.Combine(dir, "games.ini");
+                                currentExtendedInfo.GameINI = Path.Combine(fold, "games.ini");
                             }
                         } else {
                             if (gameFound) break;
                         }
                     }
-                    if (gameFound) break;
+                }
+            } else {
+                foreach (var dir in Directory.GetDirectories(local)) {
+                    if (dir.Contains(currentRom.EmuString)) {
+                        var gameIni = File.ReadAllLines(Path.Combine(dir, "games.ini"));
+                        foreach (var line in gameIni) {
+                            if (line.StartsWith("[GAME]")) {
+
+                            } else if (line.StartsWith("[ID]")) {
+                                currentExtendedInfo.ID = int.Parse(line.Substring(5));
+                            } else if (line.StartsWith("[TYPE]")) {
+                                //always 5 for non fba
+                            } else if (line.StartsWith("[NAME]")) {
+                                currentExtendedInfo.Name = line.Substring(7);
+                            } else if (line.StartsWith("[DIR]")) {
+                                currentExtendedInfo.Dir = line.Substring(6);
+                                if (currentExtendedInfo.Dir.Equals(currentRom.ID)) {
+                                    gameFound = true;
+                                    currentExtendedInfo.GameINI = Path.Combine(dir, "games.ini");
+                                }
+                            } else {
+                                if (gameFound) break;
+                            }
+                        }
+                        if (gameFound) break;
+                    }
                 }
             }
             if (gameFound) {
-                currentExtendedInfo.LCDImage = Path.Combine(_ngmhFolder, "image\\games", currentExtendedInfo.Dir, "LCD.png");
-                currentExtendedInfo.TVImage = Path.Combine(_ngmhFolder, "image\\games", currentExtendedInfo.Dir, "TV.png");
+                if (_ASPMode) {
+                    currentExtendedInfo.CoverImage = Path.Combine(_ngmhFolder, "games", currentExtendedInfo.Dir, "cover.png");
+                    currentExtendedInfo.FlyerImage = Path.Combine(_ngmhFolder, "games", currentExtendedInfo.Dir, "flyer.png");
+                } else {
+                    currentExtendedInfo.LCDImage = Path.Combine(_ngmhFolder, "image\\games", currentExtendedInfo.Dir, "LCD.png");
+                    currentExtendedInfo.TVImage = Path.Combine(_ngmhFolder, "image\\games", currentExtendedInfo.Dir, "TV.png");
+                }
                 return currentExtendedInfo;
             } else return null;
         }
@@ -157,11 +219,15 @@ namespace NeoGeoMiniRomAdder {
                     tbName.Text = currentExtendedInfo.Name;
                     tbDir.Text = currentExtendedInfo.Dir;
 
-                    using (var bmpTemp = new Bitmap(currentExtendedInfo.LCDImage)) {
-                        pbLCD.Image = new Bitmap(bmpTemp);
-                    }
-                    using (var bmpTemp = new Bitmap(currentExtendedInfo.TVImage)) {
-                        pbTV.Image = new Bitmap(bmpTemp);
+                    if (_ASPMode) {
+
+                    } else {
+                        using (var bmpTemp = new Bitmap(currentExtendedInfo.LCDImage)) {
+                            pbLCD.Image = new Bitmap(bmpTemp);
+                        }
+                        using (var bmpTemp = new Bitmap(currentExtendedInfo.TVImage)) {
+                            pbTV.Image = new Bitmap(bmpTemp);
+                        }
                     }
                 }
             }
@@ -230,8 +296,9 @@ namespace NeoGeoMiniRomAdder {
             var romInfoData = File.ReadAllLines(_romInfoPath);
             foreach (var row in dgEmus.Rows) {
                 var dgvr = (DataGridViewRow)(row);
-                if (((Emu)(dgvr.DataBoundItem)).Type == EmulatorType.fba)
-                    continue; //skip fba, they're already working.
+                var emuType = ((Emu)(dgvr.DataBoundItem)).Type;
+                if (emuType == EmulatorType.fba || emuType == EmulatorType.ra || emuType == EmulatorType.ng)
+                    continue; //skip arcade types.
                 var list = EmuLists[((Emu)(dgvr.DataBoundItem)).Type];
                 foreach (var info in list) {
                     var extInfo = GetExtendedRomInfo(info);
@@ -376,7 +443,7 @@ namespace NeoGeoMiniRomAdder {
                     Cursor.Current = Cursors.Default;
                 }
             }
-        }
+        }        
 
         private void LoadImage() {
             if (fileDialogImageLoad.ShowDialog() == DialogResult.OK) {
