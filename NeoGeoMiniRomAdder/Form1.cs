@@ -41,7 +41,7 @@ namespace NeoGeoMiniRomAdder {
         }
 
         private void Form1_Shown(object sender, EventArgs e) {
-            //try {
+            try {
             if (ngmhFolderbrowserDlg.ShowDialog() == DialogResult.OK) {
                 //init 
                 Cursor.Current = Cursors.WaitCursor;
@@ -64,10 +64,10 @@ namespace NeoGeoMiniRomAdder {
             } else {
                 throw new Exception("You must select a pre-existing NGMH folder!");
             }
-            // } catch (Exception ex) {
-            //     MessageBox.Show(ex.Message);
-            //     Close();
-            // }
+             } catch (Exception ex) {
+                 MessageBox.Show(ex.Message);
+                 Close();
+             }
         }
 
         private void LoadAll() {
