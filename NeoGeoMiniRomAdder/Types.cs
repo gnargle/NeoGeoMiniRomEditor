@@ -36,7 +36,6 @@ namespace NeoGeoMiniRomAdder {
         public bool NewImage { get; set; }
         public string TVImage { get; set; }
         public string CoverImage { get; set; }
-        public string FlyerImage { get; set; }
         public string GameINI { get; set; }
         public bool IsNew { get; set; } = false;
     }

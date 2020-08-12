@@ -26,8 +26,16 @@ namespace NeoGeoMiniRomAdder {
         private EmulatorType currentEmu;
         private RomInfo currentRom;
         private ExtendedRomInfo currentExtendedInfo;
-        private Bitmap loadedbmp, lcdbmp, tvbmp;
+        private Bitmap loadedbmp, lcdbmp, tvbmp, coverbmp;
         private bool _ASPMode = false;
+
+        private const int LCD_WIDTH = 94;
+        private const int LCD_HEIGHT = 78;
+        private const int TV_WIDTH = 282;
+        private const int TV_HEIGHT = 242;
+        private const int COVER_WIDTH = 254;
+        private const int COVER_HEIGHT = 299;
+
         public Form1() {
             InitializeComponent();            
         }
@@ -79,7 +87,7 @@ namespace NeoGeoMiniRomAdder {
                     currRom.EMU = (EmulatorType)Enum.Parse(typeof(EmulatorType), dataLine.Substring(4));
                     if (!FoundEmus.Contains(dataLine.Substring(4))) {                        
                         FoundEmus.Add(dataLine.Substring(4));
-                        if (currRom.EMU != EmulatorType.fba) //don't add fba to the grid list since adding/editing roms for that is unsupported.
+                        if (currRom.EMU != EmulatorType.fba && currRom.EMU != EmulatorType.ra && currRom.EMU != EmulatorType.ng && currRom.EMU != EmulatorType.pce) //don't add fba to the grid list since adding/editing roms for that is unsupported.
                             FoundEmusObj.Add(new Emu() { Type = currRom.EMU });
                         EmuLists.Add(currRom.EMU, new List<RomInfo>());
                     }
@@ -200,7 +208,6 @@ namespace NeoGeoMiniRomAdder {
             if (gameFound) {
                 if (_ASPMode) {
                     currentExtendedInfo.CoverImage = Path.Combine(_ngmhFolder, "games", currentExtendedInfo.Dir, "cover.png");
-                    currentExtendedInfo.FlyerImage = Path.Combine(_ngmhFolder, "games", currentExtendedInfo.Dir, "flyer.png");
                 } else {
                     currentExtendedInfo.LCDImage = Path.Combine(_ngmhFolder, "image\\games", currentExtendedInfo.Dir, "LCD.png");
                     currentExtendedInfo.TVImage = Path.Combine(_ngmhFolder, "image\\games", currentExtendedInfo.Dir, "TV.png");
@@ -220,7 +227,9 @@ namespace NeoGeoMiniRomAdder {
                     tbDir.Text = currentExtendedInfo.Dir;
 
                     if (_ASPMode) {
-
+                        using (var bmpTemp = new Bitmap(currentExtendedInfo.CoverImage)) {
+                            pbCover.Image = new Bitmap(bmpTemp);
+                        }
                     } else {
                         using (var bmpTemp = new Bitmap(currentExtendedInfo.LCDImage)) {
                             pbLCD.Image = new Bitmap(bmpTemp);
@@ -253,9 +262,18 @@ namespace NeoGeoMiniRomAdder {
                             } else if (line.StartsWith("[NAME]")) {
                                 NameIndex = idx;
                             } else if (line.StartsWith("[DIR]")) {
-                                if (currentExtendedInfo.Dir.Equals(line.Substring(6))) {
-                                    gameFound = true;
-                                    DirIndex = idx;
+                                if (_ASPMode) {
+                                    var a = line.Substring(6);
+                                    currentExtendedInfo.Dir = a.Substring(1, a.Length - 2);
+                                    if (currentExtendedInfo.Dir.Equals(currentRom.ID)) {
+                                        gameFound = true;
+                                        DirIndex = idx;
+                                    }
+                                } else {
+                                    if (currentExtendedInfo.Dir.Equals(line.Substring(6))) {
+                                        gameFound = true;
+                                        DirIndex = idx;
+                                    }
                                 }
                             } else {
                                 if (gameFound) {
@@ -263,19 +281,27 @@ namespace NeoGeoMiniRomAdder {
                                 }
                             }
                             idx++;
-                        }
+                        }                        
                         if (!gameFound) {
                             throw new Exception("Game could not be found. You may have changed the Directory (Short Name) - this needs to be reverted.");
                         }
-                        gameIni[idIndex] = $"[ID]={currentExtendedInfo.ID}";
-                        gameIni[TypeIndex] = $"[TYPE]={currentExtendedInfo.Type}";
-                        gameIni[NameIndex] = $"[NAME]={currentExtendedInfo.Name}";
-                        gameIni[DirIndex] = $"[DIR]={currentExtendedInfo.Dir}";
-                        if (currentExtendedInfo.NewImage) {
-                            ((Bitmap)pbLCD.Image).Save(currentExtendedInfo.LCDImage, ImageFormat.Png);
-                            ((Bitmap)pbTV.Image).Save(currentExtendedInfo.TVImage, ImageFormat.Png);
-                            currentExtendedInfo.NewImage = false;
-                        }
+                        if (_ASPMode) {
+                            //nothing currently changes or even exists other than the ID for asp, so leave this for now. Just save the image.
+                            if (currentExtendedInfo.NewImage) {
+                                ((Bitmap)pbCover.Image).Save(currentExtendedInfo.CoverImage, ImageFormat.Png);
+                                currentExtendedInfo.NewImage = false;
+                            }
+                        } else {
+                            gameIni[idIndex] = $"[ID]={currentExtendedInfo.ID}";
+                            gameIni[TypeIndex] = $"[TYPE]={currentExtendedInfo.Type}";
+                            gameIni[NameIndex] = $"[NAME]={currentExtendedInfo.Name}";
+                            gameIni[DirIndex] = $"[DIR]={currentExtendedInfo.Dir}";
+                            if (currentExtendedInfo.NewImage) {
+                                ((Bitmap)pbLCD.Image).Save(currentExtendedInfo.LCDImage, ImageFormat.Png);
+                                ((Bitmap)pbTV.Image).Save(currentExtendedInfo.TVImage, ImageFormat.Png);
+                                currentExtendedInfo.NewImage = false;
+                            }
+                        }                        
                     }
                 }
             } catch (Exception ex) {
@@ -313,14 +339,23 @@ namespace NeoGeoMiniRomAdder {
                         info.ID = rgx.Replace(info.ID, "").ToLower();
                         extInfo.Dir = rgx.Replace(extInfo.Dir, "").ToLower();
                         //so, first, the easy bit. Rename the image folder.
-                        var imgFolder = Path.GetDirectoryName(extInfo.LCDImage);
+                        String imgFolder = String.Empty;
+                        if (_ASPMode)
+                            imgFolder = Path.GetDirectoryName(extInfo.CoverImage);
+                        else
+                            imgFolder = Path.GetDirectoryName(extInfo.LCDImage);
                         var newImgFolder = imgFolder.Replace(origID, info.ID);
                         if (imgFolder != newImgFolder && Directory.Exists(imgFolder)) {
                             Directory.Move(imgFolder, newImgFolder + "_2");
                             Directory.Move(newImgFolder + "_2", newImgFolder);
                         }
-                        if (origPath != newPath && File.Exists(origPath.Replace("/vendor/res", _ngmhFolder)))
-                            File.Move(origPath.Replace("/vendor/res", _ngmhFolder), newPath.Replace("/vendor/res", _ngmhFolder));
+                        if (_ASPMode) {
+                            if (origPath != newPath && File.Exists(origPath.Replace("/mnt/hdisk/asph/hack/roms", _ngmhFolder)))
+                                File.Move(origPath.Replace("/mnt/hdisk/asph/hack/roms", _ngmhFolder), newPath.Replace("/mnt/hdisk/asph/hack/roms", _ngmhFolder));
+                        } else {
+                            if (origPath != newPath && File.Exists(origPath.Replace("/vendor/res", _ngmhFolder)))
+                                File.Move(origPath.Replace("/vendor/res", _ngmhFolder), newPath.Replace("/vendor/res", _ngmhFolder));
+                        }
                         //ok, now change the rominfo.txt
                         bool IDFound = false, PathFound = false;
                         for (var i = 0; i <= romInfoData.Count() - 1; i++) {
@@ -339,9 +374,21 @@ namespace NeoGeoMiniRomAdder {
                         //now, the games.ini.
                         var gameFound = false;
                         var local = Path.Combine(_ngmhFolder, "local");
-                        foreach (var dir in Directory.GetDirectories(local)) {
-                            if (dir.Contains(info.EmuString)) {
-                                var gameIni = File.ReadAllLines(Path.Combine(dir, "games.ini"));
+                        if (_ASPMode) {
+                            var langArray = File.ReadAllLines(Path.Combine(local, "lang_array.ini"));
+                            var fold = String.Empty;
+                            foreach (var langLine in langArray) {
+                                if (langLine.StartsWith("[")) {
+                                    var lineSplit = langLine.Split('=');
+                                    var emu = lineSplit[1].Substring(1, lineSplit[1].Length - 2);
+                                    if (emu.Equals(currentRom.ASPString, StringComparison.InvariantCultureIgnoreCase)) {
+                                        fold = Path.Combine(local, lineSplit[0].Substring(1, lineSplit[0].Length - 2));
+                                        break;
+                                    }
+                                }
+                            }
+                            if (fold != String.Empty) {
+                                var gameIni = File.ReadAllLines(Path.Combine(fold, "games.ini")).ToList();
                                 for (var i = 0; i <= gameIni.Count() - 1; i++) {
                                     var line = gameIni[i];
                                     if (line.StartsWith("[DIR]") && line.Contains(origID)) {
@@ -354,9 +401,31 @@ namespace NeoGeoMiniRomAdder {
                                     }
                                 }
                                 if (gameFound) {
-                                    WriteAllLinesLinux(Path.Combine(dir, "games.ini"), gameIni, "\n");
+                                    WriteAllLinesLinux(Path.Combine(fold, "games.ini"), gameIni, "\n");
                                     //NGM requires linux line-endings.
                                     break;
+                                }
+                            }
+                        } else {
+                            foreach (var dir in Directory.GetDirectories(local)) {
+                                if (dir.Contains(info.EmuString)) {
+                                    var gameIni = File.ReadAllLines(Path.Combine(dir, "games.ini"));
+                                    for (var i = 0; i <= gameIni.Count() - 1; i++) {
+                                        var line = gameIni[i];
+                                        if (line.StartsWith("[DIR]") && line.Contains(origID)) {
+                                            line = line.Replace(origID, info.ID);
+                                            gameIni[i] = line;
+                                            gameFound = true;
+                                            break;
+                                        } else {
+                                            if (gameFound) break;
+                                        }
+                                    }
+                                    if (gameFound) {
+                                        WriteAllLinesLinux(Path.Combine(dir, "games.ini"), gameIni, "\n");
+                                        //NGM requires linux line-endings.
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -380,63 +449,125 @@ namespace NeoGeoMiniRomAdder {
                         EMU = currentEmu,
                         ID = Path.GetFileNameWithoutExtension(newRomDlg.RomPath)
                     };
-                    newInfo.PATH = Path.Combine("/vendor/res/roms/", newInfo.EmuString, Path.GetFileName(newRomDlg.RomPath)).Replace("\\", "/");
+                    if (_ASPMode) {
+                        newInfo.PATH = Path.Combine("/mnt/hdisk/asph/hack/roms/", newInfo.EmuString, Path.GetFileName(newRomDlg.RomPath)).Replace("\\", "/");
+                    } else {
+                        newInfo.PATH = Path.Combine("/vendor/res/roms/", newInfo.EmuString, Path.GetFileName(newRomDlg.RomPath)).Replace("\\", "/");
+                    }
                     currentList.Add(newInfo);
-                    var newExt = new ExtendedRomInfo() {
-                        ID = -1, //we'll need to replace this when traversing the INI.
-                        Name = newRomDlg.RomName,
-                        Dir = newInfo.ID,
-                        IsNew = true,
-                        Type = 5,
-                        LCDImage = Path.Combine(_ngmhFolder, "image\\games", newInfo.ID, "LCD.png"),
-                        TVImage = Path.Combine(_ngmhFolder, "image\\games", newInfo.ID, "TV.png"),
+                    ExtendedRomInfo newExt;
+                    if (_ASPMode) {
+                        newExt = new ExtendedRomInfo() {
+                            ID = -1, //we'll need to replace this when traversing the INI.
+                            Name = newRomDlg.RomName,
+                            Dir = newInfo.ID,
+                            IsNew = true,
+                            CoverImage = Path.Combine(_ngmhFolder, "games", newInfo.ID, "cover.png")
                     };
-                    //save images and move rom into place.
-                    Directory.CreateDirectory(Path.GetDirectoryName(newExt.LCDImage));
-                    Properties.Resources.LCD.Save(newExt.LCDImage);
-                    Properties.Resources.TV.Save(newExt.TVImage);
-                    Directory.CreateDirectory(Path.GetDirectoryName(newInfo.PATH.Replace("/vendor/res", _ngmhFolder)));
-                    File.Copy(newRomDlg.RomPath, newInfo.PATH.Replace("/vendor/res", _ngmhFolder), true);
-                    //add to RomInfo.txt
-                    var romInfoData = File.ReadAllLines(_romInfoPath).ToList();
-                    romInfoData.Add($"ID={newInfo.ID}");
-                    romInfoData.Add($"EMU={newInfo.EMU}");
-                    romInfoData.Add($"PATH={newInfo.PATH}");
-                    WriteAllLinesLinux(_romInfoPath, romInfoData, "\n");
-                    //finally add to games.Ini.
-                    var local = Path.Combine(_ngmhFolder, "local");
-                    currentExtendedInfo = new ExtendedRomInfo();
-                    List<string> gameIni = new List<string>();
-                    string lastDir = String.Empty;
-                    foreach (var dir in Directory.GetDirectories(local)) {
-                        lastDir = dir;
-                        if (dir.Contains(currentRom.EmuString)) {
-                            var latestID = 0;
-                            gameIni = File.ReadAllLines(Path.Combine(dir, "games.ini")).ToList();
-                            foreach (var line in gameIni) {
-                                if (line.StartsWith("[ID]")) {
-                                    latestID = int.Parse(line.Substring(5));
+                        //save images and move rom into place.
+                        Directory.CreateDirectory(Path.GetDirectoryName(newExt.CoverImage));
+                        Properties.Resources.Cover.Save(newExt.CoverImage);
+                        Directory.CreateDirectory(Path.GetDirectoryName(newInfo.PATH.Replace("/mnt/hdisk/asph/hack/roms", _ngmhFolder)));
+                        File.Copy(newRomDlg.RomPath, newInfo.PATH.Replace("/mnt/hdisk/asph/hack/roms", _ngmhFolder), true);
+                        //add to RomInfo.txt
+                        var romInfoData = File.ReadAllLines(_romInfoPath).ToList();
+                        romInfoData.Add($"ID={newInfo.ID}");
+                        romInfoData.Add($"EMU={newInfo.EMU}");
+                        romInfoData.Add($"PATH={newInfo.PATH}");
+                        WriteAllLinesLinux(_romInfoPath, romInfoData, "\n");
+                        //finally add to games.Ini.
+                        var local = Path.Combine(_ngmhFolder, "local");
+                        var langArray = File.ReadAllLines(Path.Combine(local, "lang_array.ini"));
+                        var fold = String.Empty;
+                        foreach (var langLine in langArray) {
+                            if (langLine.StartsWith("[")) {
+                                var lineSplit = langLine.Split('=');
+                                var emu = lineSplit[1].Substring(1, lineSplit[1].Length - 2);
+                                if (emu.Equals(currentRom.ASPString, StringComparison.InvariantCultureIgnoreCase)) {
+                                    fold = Path.Combine(local, lineSplit[0].Substring(1, lineSplit[0].Length - 2));
+                                    break;
                                 }
                             }
-                            if (latestID < 80) { //80 for NGM - ASP limit is 300 before things start getting funky.
-                                newExt.ID = latestID + 1;
-                                break;
+                        }
+                        if (fold != String.Empty) {
+                            var latestID = 0;
+                            var gameIni = File.ReadAllLines(Path.Combine(fold, "games.ini")).ToList();
+                            foreach (var line in gameIni) {
+                                if (line.StartsWith("[ID]")) {
+                                    var a = line.Substring(5);
+                                    latestID = int.Parse(a.Substring(1, a.Length - 2));
+                                }
+                            }
+                            newExt.ID = latestID + 1;
+                            if (gameIni.Any()) {
+                                gameIni.Add("[GAME]");
+                                gameIni.Add($"[ID]=<{newExt.ID}>");
+                                gameIni.Add($"[TYPE]=< >");
+                                gameIni.Add($"[NAME]=< >");
+                                gameIni.Add($"[DIR]=<{newExt.Dir}>");
+                                gameIni.Add("[GAME\\]");
+                                gameIni.Add("");
+                            }
+                            WriteAllLinesLinux(Path.Combine(fold, "games.ini"), gameIni, "\n");
+                        }
+                    } else {
+                        newExt = new ExtendedRomInfo() {
+                            ID = -1, //we'll need to replace this when traversing the INI.
+                            Name = newRomDlg.RomName,
+                            Dir = newInfo.ID,
+                            IsNew = true,
+                            Type = 5,
+                            LCDImage = Path.Combine(_ngmhFolder, "image\\games", newInfo.ID, "LCD.png"),
+                            TVImage = Path.Combine(_ngmhFolder, "image\\games", newInfo.ID, "TV.png"),
+                        };
+                        //save images and move rom into place.
+                        Directory.CreateDirectory(Path.GetDirectoryName(newExt.LCDImage));
+                        Properties.Resources.LCD.Save(newExt.LCDImage);
+                        Properties.Resources.TV.Save(newExt.TVImage);
+                        Directory.CreateDirectory(Path.GetDirectoryName(newInfo.PATH.Replace("/vendor/res", _ngmhFolder)));
+                        File.Copy(newRomDlg.RomPath, newInfo.PATH.Replace("/vendor/res", _ngmhFolder), true);
+                        //add to RomInfo.txt
+                        var romInfoData = File.ReadAllLines(_romInfoPath).ToList();
+                        romInfoData.Add($"ID={newInfo.ID}");
+                        romInfoData.Add($"EMU={newInfo.EMU}");
+                        romInfoData.Add($"PATH={newInfo.PATH}");
+                        WriteAllLinesLinux(_romInfoPath, romInfoData, "\n");
+                        //finally add to games.Ini.
+                        var local = Path.Combine(_ngmhFolder, "local");
+                        currentExtendedInfo = new ExtendedRomInfo();
+                        List<string> gameIni = new List<string>();
+                        string lastDir = String.Empty;
+                        foreach (var dir in Directory.GetDirectories(local)) {
+                            lastDir = dir;
+                            if (dir.Contains(currentRom.EmuString)) {
+                                var latestID = 0;
+                                gameIni = File.ReadAllLines(Path.Combine(dir, "games.ini")).ToList();
+                                foreach (var line in gameIni) {
+                                    if (line.StartsWith("[ID]")) {
+                                        latestID = int.Parse(line.Substring(5));
+                                    }
+                                }
+                                if (latestID < 80) { //80 for NGM - ASP limit is 300 before things start getting funky.
+                                    newExt.ID = latestID + 1;
+                                    break;
+                                }
                             }
                         }
+                        /* if (newExt.ID == -1) {
+                            //need to create a new folder...
+                            //corss that bridge in a minute
+                        }*/
+                        if (gameIni.Any()) {
+                            gameIni.Add("[GAME]");
+                            gameIni.Add($"[ID]={newExt.ID}");
+                            gameIni.Add($"[TYPE]={newExt.Type}");
+                            gameIni.Add($"[NAME]={newExt.Name}");
+                            gameIni.Add($"[DIR]={newExt.Dir}");
+                            gameIni.Add("");
+                        }
+                        WriteAllLinesLinux(Path.Combine(lastDir, "games.ini"), gameIni, "\n");
+                        
                     }
-                    /* if (newExt.ID == -1) {
-                        //need to create a new folder...
-                        //corss that bridge in a minute
-                    }*/
-                    if (gameIni.Any()) {
-                        gameIni.Add("[GAME]");
-                        gameIni.Add($"[ID]={newExt.ID}");
-                        gameIni.Add($"[TYPE]={newExt.Type}");
-                        gameIni.Add($"[NAME]={newExt.Name}");
-                        gameIni.Add($"[DIR]={newExt.Dir}");
-                        gameIni.Add("");
-                    }
-                    WriteAllLinesLinux(Path.Combine(lastDir, "games.ini"), gameIni, "\n");
                     FixRoms();
                     ReloadAll();
                 } finally {
@@ -451,15 +582,21 @@ namespace NeoGeoMiniRomAdder {
                 Stream originalImageStream = new MemoryStream(data);
                 loadedbmp = new Bitmap(originalImageStream);
                 currentExtendedInfo.NewImage = true;
-                lcdbmp = new Bitmap(loadedbmp, new Size(pbLCD.Width, pbLCD.Height));
-                pbLCD.Image.Dispose();
-                pbLCD.ImageLocation = String.Empty;
-                pbLCD.Image = lcdbmp;
-                currentExtendedInfo.NewImage = true;
-                tvbmp = new Bitmap(loadedbmp, new Size(pbTV.Width, pbTV.Height));
-                pbTV.Image.Dispose();
-                pbTV.ImageLocation = String.Empty;
-                pbTV.Image = tvbmp;
+                if (_ASPMode) {
+                    coverbmp = new Bitmap(loadedbmp, new Size(COVER_WIDTH, COVER_HEIGHT));
+                    pbCover.Image.Dispose();
+                    pbCover.ImageLocation = String.Empty;
+                    pbCover.Image = coverbmp;
+                } else {                    
+                    lcdbmp = new Bitmap(loadedbmp, new Size(LCD_WIDTH, LCD_HEIGHT)); 
+                    pbLCD.Image.Dispose();
+                    pbLCD.ImageLocation = String.Empty;
+                    pbLCD.Image = lcdbmp;
+                    tvbmp = new Bitmap(loadedbmp, new Size(TV_WIDTH, TV_HEIGHT));
+                    pbTV.Image.Dispose();
+                    pbTV.ImageLocation = String.Empty;
+                    pbTV.Image = tvbmp;
+                }                
                 originalImageStream.Dispose();
             }
         }

@@ -34,7 +34,8 @@
             this.pbTV = new System.Windows.Forms.PictureBox();
             this.bLoadLCD = new System.Windows.Forms.Button();
             this.pASPImage = new System.Windows.Forms.Panel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.bLoadASP = new System.Windows.Forms.Button();
+            this.pbCover = new System.Windows.Forms.PictureBox();
             this.flDetails = new System.Windows.Forms.FlowLayoutPanel();
             this.lName = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
@@ -52,7 +53,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbLCD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbTV)).BeginInit();
             this.pASPImage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCover)).BeginInit();
             this.flDetails.SuspendLayout();
             this.flowLayoutPanel3.SuspendLayout();
             this.SuspendLayout();
@@ -168,19 +169,32 @@
             // 
             // pASPImage
             // 
-            this.pASPImage.Controls.Add(this.pictureBox1);
+            this.pASPImage.Controls.Add(this.bLoadASP);
+            this.pASPImage.Controls.Add(this.pbCover);
             this.pASPImage.Location = new System.Drawing.Point(419, 326);
             this.pASPImage.Name = "pASPImage";
-            this.pASPImage.Size = new System.Drawing.Size(462, 268);
+            this.pASPImage.Size = new System.Drawing.Size(462, 308);
             this.pASPImage.TabIndex = 11;
             // 
-            // pictureBox1
+            // bLoadASP
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(5, 13);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(100, 50);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
+            this.bLoadASP.Location = new System.Drawing.Point(26, 276);
+            this.bLoadASP.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.bLoadASP.Name = "bLoadASP";
+            this.bLoadASP.Size = new System.Drawing.Size(133, 27);
+            this.bLoadASP.TabIndex = 7;
+            this.bLoadASP.Text = "Load New Image";
+            this.bLoadASP.UseVisualStyleBackColor = true;
+            this.bLoadASP.Click += new System.EventHandler(this.bLoadLCD_Click);
+            // 
+            // pbCover
+            // 
+            this.pbCover.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.pbCover.Location = new System.Drawing.Point(188, 4);
+            this.pbCover.Name = "pbCover";
+            this.pbCover.Size = new System.Drawing.Size(254, 299);
+            this.pbCover.TabIndex = 0;
+            this.pbCover.TabStop = false;
             // 
             // flDetails
             // 
@@ -298,7 +312,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbLCD)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbTV)).EndInit();
             this.pASPImage.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCover)).EndInit();
             this.flDetails.ResumeLayout(false);
             this.flDetails.PerformLayout();
             this.flowLayoutPanel3.ResumeLayout(false);
@@ -329,7 +343,8 @@
         private System.Windows.Forms.Label lRoms;
         private System.Windows.Forms.Button bFixRoms;
         private System.Windows.Forms.Panel pASPImage;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox pbCover;
+        private System.Windows.Forms.Button bLoadASP;
     }
 }
 
