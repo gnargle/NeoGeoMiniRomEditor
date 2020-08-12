@@ -29,10 +29,13 @@
             this.dgEmus = new System.Windows.Forms.DataGridView();
             this.lRoms = new System.Windows.Forms.Label();
             this.dgRoms = new System.Windows.Forms.DataGridView();
-            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+            this.flpNGMImage = new System.Windows.Forms.FlowLayoutPanel();
             this.pbLCD = new System.Windows.Forms.PictureBox();
             this.pbTV = new System.Windows.Forms.PictureBox();
             this.bLoadLCD = new System.Windows.Forms.Button();
+            this.pASPImage = new System.Windows.Forms.Panel();
+            this.bLoadASP = new System.Windows.Forms.Button();
+            this.pbCover = new System.Windows.Forms.PictureBox();
             this.flDetails = new System.Windows.Forms.FlowLayoutPanel();
             this.lName = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
@@ -46,9 +49,11 @@
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgEmus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgRoms)).BeginInit();
-            this.flowLayoutPanel2.SuspendLayout();
+            this.flpNGMImage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLCD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbTV)).BeginInit();
+            this.pASPImage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCover)).BeginInit();
             this.flDetails.SuspendLayout();
             this.flowLayoutPanel3.SuspendLayout();
             this.SuspendLayout();
@@ -64,7 +69,8 @@
             this.flowLayoutPanel1.Controls.Add(this.dgEmus);
             this.flowLayoutPanel1.Controls.Add(this.lRoms);
             this.flowLayoutPanel1.Controls.Add(this.dgRoms);
-            this.flowLayoutPanel1.Controls.Add(this.flowLayoutPanel2);
+            this.flowLayoutPanel1.Controls.Add(this.flpNGMImage);
+            this.flowLayoutPanel1.Controls.Add(this.pASPImage);
             this.flowLayoutPanel1.Controls.Add(this.flDetails);
             this.flowLayoutPanel1.Controls.Add(this.flowLayoutPanel3);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -119,16 +125,16 @@
             this.dgRoms.TabIndex = 5;
             this.dgRoms.SelectionChanged += new System.EventHandler(this.dgRoms_SelectionChanged);
             // 
-            // flowLayoutPanel2
+            // flpNGMImage
             // 
-            this.flowLayoutPanel2.Controls.Add(this.pbLCD);
-            this.flowLayoutPanel2.Controls.Add(this.pbTV);
-            this.flowLayoutPanel2.Controls.Add(this.bLoadLCD);
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(420, 3);
-            this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(461, 317);
-            this.flowLayoutPanel2.TabIndex = 7;
+            this.flpNGMImage.Controls.Add(this.pbLCD);
+            this.flpNGMImage.Controls.Add(this.pbTV);
+            this.flpNGMImage.Controls.Add(this.bLoadLCD);
+            this.flpNGMImage.Location = new System.Drawing.Point(420, 3);
+            this.flpNGMImage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.flpNGMImage.Name = "flpNGMImage";
+            this.flpNGMImage.Size = new System.Drawing.Size(461, 317);
+            this.flpNGMImage.TabIndex = 7;
             // 
             // pbLCD
             // 
@@ -161,13 +167,42 @@
             this.bLoadLCD.UseVisualStyleBackColor = true;
             this.bLoadLCD.Click += new System.EventHandler(this.bLoadLCD_Click);
             // 
+            // pASPImage
+            // 
+            this.pASPImage.Controls.Add(this.bLoadASP);
+            this.pASPImage.Controls.Add(this.pbCover);
+            this.pASPImage.Location = new System.Drawing.Point(419, 326);
+            this.pASPImage.Name = "pASPImage";
+            this.pASPImage.Size = new System.Drawing.Size(462, 308);
+            this.pASPImage.TabIndex = 11;
+            // 
+            // bLoadASP
+            // 
+            this.bLoadASP.Location = new System.Drawing.Point(26, 276);
+            this.bLoadASP.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.bLoadASP.Name = "bLoadASP";
+            this.bLoadASP.Size = new System.Drawing.Size(133, 27);
+            this.bLoadASP.TabIndex = 7;
+            this.bLoadASP.Text = "Load New Image";
+            this.bLoadASP.UseVisualStyleBackColor = true;
+            this.bLoadASP.Click += new System.EventHandler(this.bLoadLCD_Click);
+            // 
+            // pbCover
+            // 
+            this.pbCover.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.pbCover.Location = new System.Drawing.Point(188, 4);
+            this.pbCover.Name = "pbCover";
+            this.pbCover.Size = new System.Drawing.Size(254, 299);
+            this.pbCover.TabIndex = 0;
+            this.pbCover.TabStop = false;
+            // 
             // flDetails
             // 
             this.flDetails.Controls.Add(this.lName);
             this.flDetails.Controls.Add(this.tbName);
             this.flDetails.Controls.Add(this.lDir);
             this.flDetails.Controls.Add(this.tbDir);
-            this.flDetails.Location = new System.Drawing.Point(420, 326);
+            this.flDetails.Location = new System.Drawing.Point(889, 3);
             this.flDetails.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.flDetails.Name = "flDetails";
             this.flDetails.Size = new System.Drawing.Size(461, 77);
@@ -214,7 +249,7 @@
             this.flowLayoutPanel3.Controls.Add(this.bNew);
             this.flowLayoutPanel3.Controls.Add(this.bSave);
             this.flowLayoutPanel3.Controls.Add(this.bFixRoms);
-            this.flowLayoutPanel3.Location = new System.Drawing.Point(420, 409);
+            this.flowLayoutPanel3.Location = new System.Drawing.Point(889, 86);
             this.flowLayoutPanel3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.flowLayoutPanel3.Name = "flowLayoutPanel3";
             this.flowLayoutPanel3.Size = new System.Drawing.Size(461, 115);
@@ -268,13 +303,16 @@
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "NeoGeoMini Rom Tool";
+            this.Shown += new System.EventHandler(this.Form1_Shown);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgEmus)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgRoms)).EndInit();
-            this.flowLayoutPanel2.ResumeLayout(false);
+            this.flpNGMImage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbLCD)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbTV)).EndInit();
+            this.pASPImage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pbCover)).EndInit();
             this.flDetails.ResumeLayout(false);
             this.flDetails.PerformLayout();
             this.flowLayoutPanel3.ResumeLayout(false);
@@ -294,7 +332,7 @@
         private System.Windows.Forms.DataGridView dgRoms;
         private System.Windows.Forms.Label lDir;
         private System.Windows.Forms.TextBox tbDir;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
+        private System.Windows.Forms.FlowLayoutPanel flpNGMImage;
         private System.Windows.Forms.PictureBox pbTV;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
         private System.Windows.Forms.Button bNew;
@@ -304,6 +342,9 @@
         private System.Windows.Forms.Label lEmus;
         private System.Windows.Forms.Label lRoms;
         private System.Windows.Forms.Button bFixRoms;
+        private System.Windows.Forms.Panel pASPImage;
+        private System.Windows.Forms.PictureBox pbCover;
+        private System.Windows.Forms.Button bLoadASP;
     }
 }
 
